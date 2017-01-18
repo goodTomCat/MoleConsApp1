@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedMoleRes", "SharedMoleRes.csproj", "{B545F518-E55B-4B97-B785-C8E57CAB1711}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoleClientLib", "..\MoleClientLib\MoleClientLib.csproj", "{A3D13B2E-E545-48F4-B6AA-DB4B11F61AA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MolePushServerLibPcl", "..\MolePushServerLibPcl\MolePushServerLibPcl.csproj", "{33E3E553-64D5-45CD-B61B-EBC6E7C0C7C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMCryptoFactoryLib", "..\CMCryptoFactoryLib\CMCryptoFactoryLib.csproj", "{05BFAA09-6746-4D45-8684-517F934AF2B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoleClientApplication1", "..\..\Other\MoleClientApplication1\MoleClientApplication1.csproj", "{CBE9EBD4-D4FA-4DF7-839B-F9DC9D1F60A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabyLib", "..\..\..\..\JabyClassLibraryNetCore\PclLib\JabyLib\JabyLib.csproj", "{DB0097AA-C571-4882-8E34-D5BBA7BC9F77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLib", "..\TestLib\TestLib.csproj", "{C8C89E28-0451-44F3-B8FA-10BF785528B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B545F518-E55B-4B97-B785-C8E57CAB1711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B545F518-E55B-4B97-B785-C8E57CAB1711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B545F518-E55B-4B97-B785-C8E57CAB1711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B545F518-E55B-4B97-B785-C8E57CAB1711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D13B2E-E545-48F4-B6AA-DB4B11F61AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D13B2E-E545-48F4-B6AA-DB4B11F61AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D13B2E-E545-48F4-B6AA-DB4B11F61AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D13B2E-E545-48F4-B6AA-DB4B11F61AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E3E553-64D5-45CD-B61B-EBC6E7C0C7C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E3E553-64D5-45CD-B61B-EBC6E7C0C7C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E3E553-64D5-45CD-B61B-EBC6E7C0C7C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E3E553-64D5-45CD-B61B-EBC6E7C0C7C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05BFAA09-6746-4D45-8684-517F934AF2B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05BFAA09-6746-4D45-8684-517F934AF2B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05BFAA09-6746-4D45-8684-517F934AF2B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05BFAA09-6746-4D45-8684-517F934AF2B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE9EBD4-D4FA-4DF7-839B-F9DC9D1F60A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE9EBD4-D4FA-4DF7-839B-F9DC9D1F60A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE9EBD4-D4FA-4DF7-839B-F9DC9D1F60A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE9EBD4-D4FA-4DF7-839B-F9DC9D1F60A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB0097AA-C571-4882-8E34-D5BBA7BC9F77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB0097AA-C571-4882-8E34-D5BBA7BC9F77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB0097AA-C571-4882-8E34-D5BBA7BC9F77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB0097AA-C571-4882-8E34-D5BBA7BC9F77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C89E28-0451-44F3-B8FA-10BF785528B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C89E28-0451-44F3-B8FA-10BF785528B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C89E28-0451-44F3-B8FA-10BF785528B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C89E28-0451-44F3-B8FA-10BF785528B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

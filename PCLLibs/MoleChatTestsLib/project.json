@@ -1,0 +1,20 @@
+{
+  "supports": {
+    "net46.app": {},
+    "dnxcore50.app": {}
+  },
+  "dependencies": {
+    "Microsoft.Extensions.DependencyModel": "1.1.0",
+    "System.Composition": "1.0.31",
+    "System.Runtime.Loader": "4.3.0",
+    "xunit": "2.2.0-beta4-build3444",
+    "xunit.runner.visualstudio": "2.2.0-beta4-build1194",
+    "Microsoft.NETCore": "5.0.0",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.0"
+  },
+  "frameworks": {
+    "dotnet": {
+      "imports": "portable-net452"
+    }
+  }
+}

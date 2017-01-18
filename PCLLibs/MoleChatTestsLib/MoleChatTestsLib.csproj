@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{33777657-0F18-4520-AB45-18270F3012A6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MoleChatTestsLib</RootNamespace>
+    <AssemblyName>MoleChatTestsLib</AssemblyName>
+    <DefaultLanguage>ru-RU</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="ClientToClientTests\ClientFixture.cs" />
+    <Compile Include="ClientToClientTests\ClientListner.cs" />
+    <Compile Include="ClientToClientTests\MoleClientSenderTests.cs" />
+    <Compile Include="MolePushServerTests\MolePushServerRecieverTests.cs" />
+    <Compile Include="MolePushServerTests\PushServerFixture.cs" />
+    <Compile Include="MolePushServerTests\PushServerListner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteFileStreamTests\RemoteFileStreamFixture.cs" />
+    <Compile Include="RemoteFileStreamTests\RemoteFileStreamTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CMCryptoFactoryLib\CMCryptoFactoryLib.csproj">
+      <Project>{05bfaa09-6746-4d45-8684-517f934af2b1}</Project>
+      <Name>CMCryptoFactoryLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MoleClientLib\MoleClientLib.csproj">
+      <Project>{a3d13b2e-e545-48f4-b6aa-db4b11f61aa4}</Project>
+      <Name>MoleClientLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MolePushServerLibPcl\MolePushServerLibPcl.csproj">
+      <Project>{33e3e553-64d5-45cd-b61b-ebc6e7c0c7c4}</Project>
+      <Name>MolePushServerLibPcl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharedMoleRes\SharedMoleRes.csproj">
+      <Project>{b545f518-e55b-4b97-b785-c8e57cab1711}</Project>
+      <Name>SharedMoleRes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Extensions\CngMicrosoftCryptoFactory.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JabyLib">
+      <HintPath>..\..\..\..\JabyClassLibraryNetCore\PclLib\JabyLib\bin\Debug\JabyLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

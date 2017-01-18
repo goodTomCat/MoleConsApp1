@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B545F518-E55B-4B97-B785-C8E57CAB1711}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharedMoleRes</RootNamespace>
+    <AssemblyName>SharedMoleRes</AssemblyName>
+    <DefaultLanguage>ru-RU</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\SharedMoleRes.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Client\ClientToClientAuthForm.cs" />
+    <Compile Include="Client\ContactForm.cs" />
+    <Compile Include="Client\Crypto\CryptoFactoryBase.cs" />
+    <Compile Include="Client\Crypto\CryptoInfo.cs" />
+    <Compile Include="Client\Crypto\IAsymmetricEncrypter.cs" />
+    <Compile Include="Client\Crypto\IAsymmetricKeysExchange.cs" />
+    <Compile Include="Client\Crypto\ISign.cs" />
+    <Compile Include="Client\Crypto\MoleECDsaCng.cs" />
+    <Compile Include="Client\Crypto\MoleECDsaCngParams.cs" />
+    <Compile Include="Client\Crypto\MoleRsaCng.cs" />
+    <Compile Include="Client\Crypto\MoleRsaCngParams.cs" />
+    <Compile Include="Client\Crypto\PossibleCryptoInfo.cs" />
+    <Compile Include="Client\MolePushServerSender.cs" />
+    <Compile Include="Client\PublicKeyForm.cs" />
+    <Compile Include="Client\SignForm.cs" />
+    <Compile Include="Client\Surrogates\ECParametersSur.cs" />
+    <Compile Include="Client\Surrogates\PossibleCryptoInfoSur.cs" />
+    <Compile Include="Client\UserInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\AccessibilityInfo.cs" />
+    <Compile Include="Server\AuthenticationFormClassic.cs" />
+    <Compile Include="Server\AuthenticationFormSign.cs" />
+    <Compile Include="Server\CurrentResult.cs" />
+    <Compile Include="Server\DicStorage.cs" />
+    <Compile Include="Server\IAuthenticationForm.cs" />
+    <Compile Include="Server\IAuthenticationFormClassic.cs" />
+    <Compile Include="Server\IAuthenticationFormSign.cs" />
+    <Compile Include="Server\KeyDataForSymmetricAlgorithm.cs" />
+    <Compile Include="Server\OfflineMessageForm.cs" />
+    <Compile Include="Server\OfflineMessagesConcurent.cs" />
+    <Compile Include="Server\ResultOfOperation.cs" />
+    <Compile Include="Server\Result\IData.cs" />
+    <Compile Include="Server\Result\IError.cs" />
+    <Compile Include="Server\Result\IResult.cs" />
+    <Compile Include="Server\Result\Result.cs" />
+    <Compile Include="Server\Result\ResultAsData.cs" />
+    <Compile Include="Server\Result\ResultAsError.cs" />
+    <Compile Include="Server\Surrogates\AccessibilityInfoSur.cs" />
+    <Compile Include="Server\Surrogates\AuthenticationFormClassicSur.cs" />
+    <Compile Include="Server\Surrogates\AuthenticationFormSignSur.cs" />
+    <Compile Include="Server\Surrogates\AuthenticationFormSur.cs" />
+    <Compile Include="Server\Surrogates\CurrentResultSurrogate.cs" />
+    <Compile Include="Server\Surrogates\IpAddressSurrogate.cs" />
+    <Compile Include="Server\Surrogates\KeyDataForSymmetricAlgorithmSurrogate.cs" />
+    <Compile Include="Server\Surrogates\OfflineMessagesConcurentSur.cs" />
+    <Compile Include="Server\Surrogates\OfflineMessagesSur.cs" />
+    <Compile Include="Server\Surrogates\ResultOfOperationSurrogate.cs" />
+    <Compile Include="Server\Surrogates\UserFormSurrogate.cs" />
+    <Compile Include="Server\UserForm.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="JabyLib">
+      <HintPath>..\..\..\..\JabyClassLibraryNetCore\PclLib\JabyLib\bin\Debug\JabyLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
