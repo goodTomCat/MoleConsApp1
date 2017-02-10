@@ -33,7 +33,8 @@ namespace MoleClientLib
 
 
         public MoleClientCore(CustomBinarySerializerBase serializer, string dirForFileSaving, 
-            ICollection<CryptoFactoryBase> factoriesBase, UserForm myUserForm) : base(serializer, factoriesBase, myUserForm)
+            ICollection<CryptoFactoryBase> factoriesBase, UserForm myUserForm, ISign signAlgImpl) 
+            : base(serializer, factoriesBase, myUserForm, signAlgImpl)
         {
             if (dirForFileSaving == null)
                 throw new ArgumentNullException(nameof(dirForFileSaving)) {Source = GetType().AssemblyQualifiedName};
@@ -68,8 +69,8 @@ namespace MoleClientLib
             DirForFileSaving = dirForFileSaving;
         }
         public MoleClientCore(CustomBinarySerializerBase serializer, ICollection<CryptoFactoryBase> factoriesBase,
-            UserForm myUserForm, IEnumerable<ContactForm> contactsF)
-            : base(serializer, factoriesBase, myUserForm)
+            UserForm myUserForm, IEnumerable<ContactForm> contactsF, ISign signAlgImpl)
+            : base(serializer, factoriesBase, myUserForm, signAlgImpl)
         {
             if (contactsF == null) throw new ArgumentNullException(nameof(contactsF))
             { Source = GetType().AssemblyQualifiedName };
@@ -108,11 +109,11 @@ namespace MoleClientLib
                 return Task.CompletedTask;
             }
         }
-        public override Tuple<bool, ContactForm> AuthenticateContacnt(string login, IPEndPoint endPoint,
+        public override Tuple<bool, ContactForm> AuthenticateContacnt(ClientToClientAuthForm authForm, CryptoFactoryBase factory, IPEndPoint endPoint,
             IEnumerable<ContactForm> publicForms,
             ResultOfOperation resultOfOperation)
         {
-            var neededUsers = publicForms.Where(form => form.Login.Equals(login)).ToArray();
+            var neededUsers = publicForms.Where(form => form.Login.Equals(authForm.Login)).ToArray();
             if (neededUsers.Length != 1)
             {
                 resultOfOperation.ErrorMessage = "Пользователь с таким именем не зарегистрирован.";
@@ -128,36 +129,43 @@ namespace MoleClientLib
                 return new Tuple<bool, ContactForm>(resultOfOperation.OperationWasFinishedSuccessful, null);
             }
 
+            if (!authForm.ValidateSign(factory, neededUser.PublicKey))
+            {
+                resultOfOperation.ErrorMessage = "Аутентификация не удалась. Не удалось подтвердить подлинность подписи.";
+                resultOfOperation.OperationWasFinishedSuccessful = false;
+                return new Tuple<bool, ContactForm>(resultOfOperation.OperationWasFinishedSuccessful, null);
+            }
+            
             resultOfOperation.OperationWasFinishedSuccessful = true;
             return new Tuple<bool, ContactForm>(resultOfOperation.OperationWasFinishedSuccessful, neededUser);
         }
-        public override async Task<Tuple<bool, ContactForm>> RegisterNewContactAsync(string login, IPEndPoint endPoint,
-            IEnumerable<ContactForm> formsPublic,
-            ResultOfOperation resultOfOperation)
-        {
-            try
-            {
-                var forms = formsPublic as ContactForm[] ?? formsPublic.ToArray();
-                Tuple<bool, ContactForm> authResult = AuthenticateContacnt(login, endPoint, forms, resultOfOperation);
-                if (authResult.Item1)
-                {
-                    var form = forms.First(userForm => userForm.Login.Equals(login));
-                    var args = new RegisterNewContactEventArgs {Ip = endPoint.Address, Login = login};
-                    await OnRegisterNewContact(args).ConfigureAwait(false);
-                    if (args.IsAllow)
-                        ContactsF.Add(form);
-                    resultOfOperation.OperationWasFinishedSuccessful = true;
-                }
-                return authResult;
-            }
-            catch (InvalidOperationException ex)
-            {
-                resultOfOperation.OperationWasFinishedSuccessful = false;
-                resultOfOperation.ErrorMessage = "Пользователь не зарегистрирован на внешнем сервере.";
-                return new Tuple<bool, ContactForm>(false, null);
-            }
+        //public override async Task<Tuple<bool, ContactForm>> RegisterNewContactAsync(string login, IPEndPoint endPoint,
+        //    IEnumerable<ContactForm> formsPublic,
+        //    ResultOfOperation resultOfOperation)
+        //{
+        //    try
+        //    {
+        //        var forms = formsPublic as ContactForm[] ?? formsPublic.ToArray();
+        //        Tuple<bool, ContactForm> authResult = AuthenticateContacnt(login, endPoint, forms, resultOfOperation);
+        //        if (authResult.Item1)
+        //        {
+        //            var form = forms.First(userForm => userForm.Login.Equals(login));
+        //            var args = new RegisterNewContactEventArgs {Ip = endPoint.Address, Login = login};
+        //            await OnRegisterNewContact(args).ConfigureAwait(false);
+        //            if (args.IsAllow)
+        //                ContactsF.Add(form);
+        //            resultOfOperation.OperationWasFinishedSuccessful = true;
+        //        }
+        //        return authResult;
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        resultOfOperation.OperationWasFinishedSuccessful = false;
+        //        resultOfOperation.ErrorMessage = "Пользователь не зарегистрирован на внешнем сервере.";
+        //        return new Tuple<bool, ContactForm>(false, null);
+        //    }
 
-        }
+        //}
         public override async Task<bool> RegisterNewContactAsync(ContactForm form, IPEndPoint endPoint,
             ResultOfOperation resultOfOperation)
         {

@@ -21,7 +21,7 @@ namespace MoleClientLib
     {
         private ContactForm _form;
         private bool _userIsAuth;
-        protected ISign Signn;
+        //protected ISign Signn;
         protected CryptoFactoryBase CurrentCryptoFactoryBase;
         protected IPEndPoint RemIp;
         private MolePushServerSender _servSender;
@@ -264,14 +264,15 @@ namespace MoleClientLib
         }
         private async Task AuthenticateUserCommandAsync(Stream stream)
         {
-            await CheckMessage(stream, 70).ConfigureAwait(false);
+            await CheckMessage(stream, 500).ConfigureAwait(false);
             var result = new ResultOfOperation();
             try
             {
                 var authForm = Core.Serializer.Deserialize<ClientToClientAuthForm>(stream, false);
                 var userForms = await _servSender.FinedUserAsync(authForm.Login).ConfigureAwait(false);
                 var contacts = userForms.Select(surrogate => (ContactForm)surrogate).ToArray();
-                Tuple<bool, ContactForm> authResult = Core.AuthenticateContacnt(authForm.Login, RemoteEndPoint,
+                Tuple<bool, ContactForm> authResult = Core.AuthenticateContacnt(authForm, CurrentCryptoFactoryBase,
+                    RemoteEndPoint,
                     contacts,
                     result);
                 if (authResult.Item1)
@@ -429,6 +430,13 @@ namespace MoleClientLib
         }
         private async Task RegisterNewContactAsync(Stream stream)
         {
+            if (!_userIsAuth)
+            {
+                await ReturnResultToClientAsync(
+                        new ResultOfOperation() {ErrorMessage = "Аутентификация еще не была проведена."}, false, false)
+                    .ConfigureAwait(false);
+            }
+
             await CheckMessage(stream, 70).ConfigureAwait(false);
             var result = new ResultOfOperation();
             try
@@ -440,15 +448,14 @@ namespace MoleClientLib
                     stream.CopyTo(streamTemp);
                 }
                 var login = Encoding.UTF8.GetString(streamTemp.ToArray());
-                if (_form != null && _form.Login.Equals(login))
-                    await Core.RegisterNewContactAsync(_form, RemoteEndPoint, result).ConfigureAwait(false);
-                else
-                {
-                    var formsPublic =
-                        (await _servSender.GetUsersPublicData(new[] {login})).Select(form => (ContactForm) form)
-                            .ToArray();
-                    await Core.RegisterNewContactAsync(login, RemoteEndPoint, formsPublic, result).ConfigureAwait(false);
-                }
+                await Core.RegisterNewContactAsync(_form, RemoteEndPoint, result).ConfigureAwait(false);
+                //else
+                //{
+                //    var formsPublic =
+                //        (await _servSender.GetUsersPublicData(new[] {login})).Select(form => (ContactForm) form)
+                //            .ToArray();
+                //    await Core.RegisterNewContactAsync(login, RemoteEndPoint, formsPublic, result).ConfigureAwait(false);
+                //}
                 await ReturnResultToClientAsync(result).ConfigureAwait(false);
             }
             catch (DecoderFallbackException ex)
@@ -530,7 +537,34 @@ namespace MoleClientLib
                 AsymmetricDecrypter = CurrentCryptoFactoryBase.CreateAsymmetricAlgoritm(ChoosenCrypto.Provider,
                     ChoosenCrypto.Asymmetric);
                 var publickey = AsymmetricDecrypter.Export(false);
-                return ReturnResultToClientAsync(new CurrentResult<byte[]>() {Result = publickey}, false, false);
+                var hashAlg =
+                    CurrentCryptoFactoryBase.CreateHashAlgorithm(Core.MyUserForm.KeyParametrsBlob.CryptoProvider,
+                        Core.MyUserForm.KeyParametrsBlob.HashAlg);
+                var hash = hashAlg.ComputeHash(publickey);
+                //var signAlg =
+                //    CurrentCryptoFactoryBase.CreateSignAlgoritm(Core.MyUserForm.KeyParametrsBlob.CryptoProvider,
+                //        Core.MyUserForm.KeyParametrsBlob.CryptoAlg);
+                //signAlg.Import(Core.MyUserForm.KeyParametrsBlob.Key);
+                var publicKeySign = Core.SignAlgImpl.Export(false);
+                var sign = Core.SignAlgImpl.SignData(hash);
+                var publicKeyForm = new PublicKeyForm()
+                {
+                    CryptoAlg = Core.MyUserForm.KeyParametrsBlob.CryptoAlg,
+                    CryptoProvider = Core.MyUserForm.KeyParametrsBlob.CryptoProvider,
+                    Hash = hash,
+                    HashAlg = Core.MyUserForm.KeyParametrsBlob.HashAlg,
+                    Key = publickey,
+                    Sign = sign
+                };
+
+                return
+                    ReturnResultToClientAsync(
+                        new CurrentResult<PublicKeyForm>()
+                        {
+                            Result = publicKeyForm,
+                            OperationWasFinishedSuccessful = true
+                        }, false, false);
+                //return ReturnResultToClientAsync(new CurrentResult<byte[]>() {Result = publickey}, false, false);
             }
             catch (Exception ex)
             {
@@ -545,14 +579,25 @@ namespace MoleClientLib
         }
         private async Task SetPublicKey(Stream stream)
         {
-            await CheckMessage(stream, 300).ConfigureAwait(false);
+            if (!_userIsAuth)
+            {
+                await ReturnResultToClientAsync(
+                        new ResultOfOperation() { ErrorMessage = "Аутентификация еще не была проведена." }, false, false)
+                    .ConfigureAwait(false);
+            }
+
+            await CheckMessage(stream, 1000).ConfigureAwait(false);
             try
             {
-                var publicKey = new byte[stream.Length - 2];
-                stream.Read(publicKey, 0, publicKey.Length);
+                //var publicKey = new byte[stream.Length - 2];
+                //stream.Read(publicKey, 0, publicKey.Length);
+                var publicKeyForm = Core.Serializer.Deserialize<PublicKeyForm>(stream, false);
+                if (!publicKeyForm.ValidateSign(CurrentCryptoFactoryBase, _form.PublicKey.Key))
+                    await ReturnErrorMessageToClientAsync(6, 2).ConfigureAwait(false);
+
                 AsymmetricEncrypter = CurrentCryptoFactoryBase.CreateAsymmetricAlgoritm(ChoosenCrypto.Provider,
                     ChoosenCrypto.Asymmetric);
-                AsymmetricEncrypter.Import(publicKey);
+                AsymmetricEncrypter.Import(publicKeyForm.Key);
                 await ReturnResultToClientAsync(new ResultOfOperation() {OperationWasFinishedSuccessful = true}, false,
                     false).ConfigureAwait(false);
             }
@@ -565,6 +610,10 @@ namespace MoleClientLib
             {
                 _queueOfAsyncActions.Add(() => InvokeExceptionCatchedEvent(ex));
                 await ReturnErrorMessageToClientAsync(6, 1).ConfigureAwait(false);
+            }
+            catch (SerializationException ex)
+            {
+                
             }
             catch (Exception ex)
             {
@@ -843,6 +892,10 @@ namespace MoleClientLib
                             break;
                         case 1:
                             mes = "Во время импорта ключа в криптографический объект возникла ошибка.";
+                            resultOfOperation = new ResultOfOperation() { ErrorMessage = mes };
+                            break;
+                        case 2:
+                            mes = "Не удалось подтвердить подлинность открытого ключа.";
                             resultOfOperation = new ResultOfOperation() { ErrorMessage = mes };
                             break;
                     }

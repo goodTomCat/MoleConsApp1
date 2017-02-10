@@ -7,6 +7,7 @@ using MoleClientLib;
 using MoleClientLib.RemoteFileStream;
 using ProtoBuf.Meta;
 using SharedMoleRes.Client;
+using SharedMoleRes.Client.Crypto;
 using SharedMoleRes.Server;
 using SharedMoleRes.Server.Surrogates;
 using TestLib.MolePushServerTests;
@@ -43,12 +44,12 @@ namespace TestLib.ClientToClientTests
                 clientATupl.Item1.Accessibility.AddToConst("Frodo2");
 
                 CoreClientAF = new MoleClientCore(new ProtoBufSerializer(), @"C:\MoleFileSavingA",
-                    ServerListnerF.CryptoFactories, clientATupl.Item1);
+                    ServerListnerF.CryptoFactories, clientATupl.Item1, (ISign)clientATupl.Item3);
                 var clientBTupl = PushServerFixture.CreateForm("Frodo2", true, ip, rand);
                 clientBTupl.Item1.Accessibility = new AccessibilityInfo(100, 5);
                 clientBTupl.Item1.Accessibility.AddToConst("Frodo1");
                 CoreClientBF = new MoleClientCore(new ProtoBufSerializer(), @"C:\MoleFileSavingB",
-                    ServerListnerF.CryptoFactories, clientBTupl.Item1);
+                    ServerListnerF.CryptoFactories, clientBTupl.Item1, (ISign)clientBTupl.Item3);
 
                 PServSenderFromClientA = new MolePushServerSender(ServerListnerF.CryptoFactories, ServerListnerF.PossibleCrypto);
                 PServSenderFromClientA.InitializeConnectionAsync(ServerListnerF.EndPoint.Address,
@@ -111,7 +112,7 @@ namespace TestLib.ClientToClientTests
             //var typesInModel = model.GetTypes().Cast<MetaType>().Select((type => type.Type));
 
             var metaRsaParams = model.Add(typeof(ClientToClientAuthForm), true);
-            metaRsaParams.Add("Login", "PrivateKey");
+            metaRsaParams.Add("Login", "Hash", "Sign");
 
             var metaFileRecieveRequest = model.Add(typeof(FileRecieveRequest), true);
             metaFileRecieveRequest.Add("Length", "Name");

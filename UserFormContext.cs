@@ -2,7 +2,7 @@
 using SharedMoleRes.Client;
 using SharedMoleRes.Server.Surrogates;
 
-namespace MolePushServerLibPcl
+namespace MoleConsApp1
 {
     public class UserFormContext : DbContext
     {

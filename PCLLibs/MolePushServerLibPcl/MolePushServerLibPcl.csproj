@@ -48,14 +48,11 @@
     <Compile Include="UserFormContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedMoleRes\SharedMoleRes.csproj">
-      <Project>{b545f518-e55b-4b97-b785-c8e57cab1711}</Project>
-      <Name>SharedMoleRes</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="JabyLib">
       <HintPath>..\..\..\..\JabyClassLibraryNetCore\PclLib\JabyLib\bin\Debug\JabyLib.dll</HintPath>
+    </Reference>
+    <Reference Include="SharedMoleRes">
+      <HintPath>..\SharedMoleRes\bin\Debug\SharedMoleRes.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

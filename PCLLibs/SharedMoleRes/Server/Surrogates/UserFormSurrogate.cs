@@ -10,7 +10,7 @@ namespace SharedMoleRes.Server.Surrogates
         public int Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
-        public byte[] KeyParametrsBlob { get; set; }
+        public PublicKeyForm KeyParametrsBlob { get; set; }
         public int PortClientToClient1 { get; set; }
         public int PortClientToClient2 { get; set; }
         public int PortClientToClient3 { get; set; }

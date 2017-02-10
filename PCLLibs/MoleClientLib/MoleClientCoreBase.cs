@@ -30,7 +30,8 @@ namespace MoleClientLib
 
         /// <exception cref="ArgumentNullException">nameOfCryptoProvider == null. -or- signAlg == null. 
         /// -or- asEnc == null. -or- serializer == null. -or- nameOfCryptoProvider == null.</exception>
-        protected MoleClientCoreBase(CustomBinarySerializerBase serializer, ICollection<CryptoFactoryBase> factoriesBase, UserForm myUserForm)
+        protected MoleClientCoreBase(CustomBinarySerializerBase serializer, ICollection<CryptoFactoryBase> factoriesBase, 
+            UserForm myUserForm, ISign signAlgImpl)
         {
             if (serializer == null) throw new ArgumentNullException(nameof(serializer)) {Source = GetType().AssemblyQualifiedName};
             if (factoriesBase == null) throw new ArgumentNullException(nameof(factoriesBase)) { Source = GetType().AssemblyQualifiedName };
@@ -40,10 +41,14 @@ namespace MoleClientLib
             if (myUserForm == null)
                 throw new ArgumentNullException(nameof(myUserForm))
                 { Source = GetType().AssemblyQualifiedName };
+            if (signAlgImpl == null)
+                throw new ArgumentNullException(nameof(signAlgImpl))
+                { Source = GetType().AssemblyQualifiedName };
 
             Ser = serializer;
             Factories = new ReadOnlyCollection<CryptoFactoryBase>(factoriesBase.ToArray());
             MyUserForm = myUserForm;
+            SignAlgImpl = signAlgImpl;
         }
 
 
@@ -111,14 +116,15 @@ namespace MoleClientLib
                 return posNew;
             }
         }
+        public ISign SignAlgImpl { get; protected set; }
 
 
         public abstract Task TextMessageRecieved(string login, string message, ResultOfOperation result, ContactForm form = null,
             bool userIsAuth = true);
-        public abstract Tuple<bool, ContactForm> AuthenticateContacnt(string login, IPEndPoint endPoint, IEnumerable<ContactForm> publicForms,
+        public abstract Tuple<bool, ContactForm> AuthenticateContacnt(ClientToClientAuthForm authForm, CryptoFactoryBase factory, IPEndPoint endPoint, IEnumerable<ContactForm> publicForms,
             ResultOfOperation resultOfOperation);
-        public abstract Task<Tuple<bool, ContactForm>> RegisterNewContactAsync(string login, IPEndPoint endPoint, IEnumerable<ContactForm> formsPublic,
-            ResultOfOperation resultOfOperation);
+        //public abstract Task<Tuple<bool, ContactForm>> RegisterNewContactAsync(string login, IPEndPoint endPoint, IEnumerable<ContactForm> formsPublic,
+        //    ResultOfOperation resultOfOperation);
         public abstract Task<bool> RegisterNewContactAsync(ContactForm form, IPEndPoint endPoint,
             ResultOfOperation resultOfOperation);
         public abstract Task<bool> RecieveOfFileTransferRequest(FileRecieveRequest request, IPEndPoint endPoint, ContactForm contact,

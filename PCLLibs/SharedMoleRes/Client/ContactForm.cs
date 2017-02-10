@@ -92,6 +92,7 @@ namespace SharedMoleRes.Client
                 _signForm = value;
             }
         }
+        public PublicKeyForm PublicKey { get; set; }
         /// <exception cref="ArgumentOutOfRangeException">Номер порта равен нулю.</exception>
         public int PortClientToClient1
         {
@@ -252,6 +253,14 @@ namespace SharedMoleRes.Client
                 contact._portClientToClient3 = userForm.PortClientToClient3;
                 contact._portServerToClient = userForm.PortServerToClient;
                 contact._ip = userForm.Ip?.ToString();
+                contact.PublicKey = userForm.KeyParametrsBlob;
+                //if (userForm.KeyParametrsBlob != null)
+                //{
+                //    contact.SignForm = new SignForm(userForm.KeyParametrsBlob.CryptoProvider,
+                //        userForm.KeyParametrsBlob.Key, userForm.KeyParametrsBlob.CryptoAlg,
+                //        userForm.KeyParametrsBlob.Sign, userForm.KeyParametrsBlob.Hash);
+                //}
+                
                 return contact;
             }
             catch (Exception ex)

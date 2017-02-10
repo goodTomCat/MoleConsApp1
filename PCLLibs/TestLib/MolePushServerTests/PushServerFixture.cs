@@ -54,6 +54,18 @@ namespace TestLib.MolePushServerTests
             var rand = random ?? new Random();
             var ecdsa = new MoleECDsaCng();
             var publicKey = ecdsa.Export(false);
+            //PossibleCryptoAlgs = new PossibleCryptoInfo(new[] { "CngMicrosoft" }, new[] { "Sha1", "Md5", "Sha256" },
+            //    new[] { "Rsa" }, new[] { "Aes", "Des" }, new[] { "Ecc" });
+            var hashAlg = SHA1.Create();
+            var hash = hashAlg.ComputeHash(publicKey);
+            var publicKeyForm = new PublicKeyForm()
+            {
+                CryptoAlg = "Ecc",
+                CryptoProvider = "CngMicrosoft",
+                Key = publicKey,
+                Hash = hash,
+                HashAlg = "Sha1"
+            };
             var form = new UserForm()
             {
                 Accessibility = new AccessibilityInfo(100, 5) { IsPublicProfile = true },
@@ -63,7 +75,7 @@ namespace TestLib.MolePushServerTests
                 PortClientToClient2 = (ushort)rand.Next(20000, 60000),
                 PortClientToClient3 = (ushort)rand.Next(20000, 60000),
                 PortServerToClient = (ushort)rand.Next(20000, 60000),
-                KeyParametrsBlob = publicKey
+                KeyParametrsBlob = publicKeyForm
             };
             //192.168.65.129
             var listners = new List<TcpListener>(4);
@@ -165,6 +177,7 @@ namespace TestLib.MolePushServerTests
                 metaResultOfOperation.AddSubType(600, typeof(CurrentResult<KeyDataForSymmetricAlgorithm>));
                 metaResultOfOperation.AddSubType(700, typeof(CurrentResult<ICollection<UserFormSurrogate>>));
                 metaResultOfOperation.AddSubType(800, typeof(CurrentResult<PossibleCryptoInfo>));
+                metaResultOfOperation.AddSubType(900, typeof(CurrentResult<PublicKeyForm>));
                 metaResultOfOperation.Add("ErrorCode", "ErrorMessage", "OperationWasFinishedSuccessful");
 
                 var metaCurrentResult = model.Add(typeof(CurrentResult<UserForm>), true);
@@ -190,6 +203,9 @@ namespace TestLib.MolePushServerTests
 
                 var metaCurrentResult8 = model.Add(typeof(CurrentResult<PossibleCryptoInfo>), true);
                 metaCurrentResult8.Add("Result");
+
+                var metaCurrentResult9 = model.Add(typeof(CurrentResult<PublicKeyForm>), true);
+                metaCurrentResult9.Add("Result");
             }
 
             if (!typesInModel.Contains(typeof(KeyDataForSymmetricAlgorithm)))
@@ -218,6 +234,11 @@ namespace TestLib.MolePushServerTests
 
                 var metaOfAuthenticationFormClassicCl = model.Add(typeof(AuthenticationFormClassic), false);
                 metaOfAuthenticationFormClassicCl.SetSurrogate(typeof(AuthenticationFormClassicSur));
+            }
+            if (!typesInModel.Contains(typeof(PublicKeyForm)))
+            {
+                var metaPublicKeyForm = model.Add(typeof(PublicKeyForm), true);
+                metaPublicKeyForm.Add("Key", "CryptoProvider", "CryptoAlg", "HashAlg", "Hash", "Sign");
             }
 
         }

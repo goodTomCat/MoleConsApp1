@@ -15,7 +15,8 @@ namespace SharedMoleRes.Server
     {
         private string _login;
         private string _pass;
-        private byte[] _keyParamsBlob;
+        //private byte[] _keyParamsBlob;
+        private PublicKeyForm _publicKeySign;
         private int _portClientToClient1;
         private int _portClientToClient2;
         private int _portClientToClient3;
@@ -62,18 +63,17 @@ namespace SharedMoleRes.Server
         }
         /// <summary>Открытый ключ для цифровой подписи.</summary>
         /// <exception cref="ArgumentNullException">value == null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Длина массива равна нулю.</exception>
-        public byte[] KeyParametrsBlob
+        public PublicKeyForm KeyParametrsBlob
         {
-            get { return _keyParamsBlob; }
+            get { return _publicKeySign; }
             set
             {
                 if (value == null)
                     throw new ArgumentNullException(nameof(value)) { Source = GetType().AssemblyQualifiedName };
-                if (value.Length == 0)
-                    throw new ArgumentOutOfRangeException(nameof(value), "Длина массива равна нулю.") { Source = GetType().AssemblyQualifiedName };
+                //if (value.Length == 0)
+                //    throw new ArgumentOutOfRangeException(nameof(value), "Длина массива равна нулю.") { Source = GetType().AssemblyQualifiedName };
 
-                _keyParamsBlob = value;
+                _publicKeySign = value;
             }
         }
         /// <exception cref="ArgumentOutOfRangeException">Номер порта равен нулю.</exception>
@@ -221,6 +221,7 @@ namespace SharedMoleRes.Server
                     userForm.PortServerToClient = contact.PortServerToClient;
                 if (contact.Ip != null)
                     userForm.Ip = contact.Ip;
+                userForm.KeyParametrsBlob = contact.PublicKey;
 
                 return userForm;
             }
@@ -286,7 +287,7 @@ namespace SharedMoleRes.Server
 
             try
             {
-                return CngKey.Import(KeyParametrsBlob, CngKeyBlobFormat.GenericPublicBlob);
+                return CngKey.Import(_publicKeySign.Key, CngKeyBlobFormat.GenericPublicBlob);
             }
             catch (PlatformNotSupportedException ex)
             {

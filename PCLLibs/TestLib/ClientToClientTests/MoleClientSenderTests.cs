@@ -37,6 +37,8 @@ namespace TestLib.ClientToClientTests
         [Fact]
         public void GetSessionKeyTest()
         {
+            if (!SenderClientA.IsAuth)
+                AuthTest();
             if (SenderClientA.SymmetricEncrypter != null)
                 return;
 
@@ -112,8 +114,12 @@ namespace TestLib.ClientToClientTests
             {
                 if (SenderClientB.AsymmetricEncrypter == null)
                 {
+                    SenderClientB.AuthenticateAsync().Wait();
                     SenderClientB.GetPublicKeyAsync().Wait();
                     SenderClientB.SetPublicKey().Wait();
+
+                    //SenderClientB.GetPublicKeyAsync().Wait();
+                    //SenderClientB.SetPublicKey().Wait();
                 }
 
                 SenderClientB.GetSessionKey().Wait();

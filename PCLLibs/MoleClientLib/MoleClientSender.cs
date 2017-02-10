@@ -140,6 +140,10 @@ namespace MoleClientLib
             if (!IsAuth)
                 await AuthenticateAsync();
 
+            //var autForm = new ClientToClientAuthForm() { Login = CoreF.MyUserForm.Login };
+            //autForm.CreateSign(CryptoFactory, CoreF.MyUserForm.KeyParametrsBlob, CoreF.SignAlgImpl);
+            //var result = await SendAndRecieveAsync(autForm, 2, true, false).ConfigureAwait(false);
+
             var content = Encoding.UTF8.GetBytes(CoreF.MyUserForm.Login);
             var result = await SendAndRecieveAsync(content, 2, true, false).ConfigureAwait(false);
             var resultOfOperation = Serializer.Deserialize<ResultOfOperation>(result, false);
@@ -185,9 +189,11 @@ namespace MoleClientLib
 
             try
             {
-                Tuple<ICryptoTransform, ICryptoTransform, KeyDataForSymmetricAlgorithm> symmTupl =
-                    CryptoFactory.CreateSymmetricAlgoritm(CryptoInfoChoosen.Provider, CryptoInfoChoosen.Symmetric);
-                var autForm = new ClientToClientAuthForm() {Login = CoreF.MyUserForm.Login, PrivateKey = symmTupl.Item3};
+                //Tuple<ICryptoTransform, ICryptoTransform, KeyDataForSymmetricAlgorithm> symmTupl =
+                //    CryptoFactory.CreateSymmetricAlgoritm(CryptoInfoChoosen.Provider, CryptoInfoChoosen.Symmetric);
+                //var autForm = new ClientToClientAuthForm() {Login = CoreF.MyUserForm.Login, PrivateKey = symmTupl.Item3};
+                var autForm = new ClientToClientAuthForm() {Login = CoreF.MyUserForm.Login};
+                autForm.CreateSign(CryptoFactory, CoreF.MyUserForm.KeyParametrsBlob, CoreF.SignAlgImpl);
                 var result = await SendAndRecieveAsync(autForm, 1, true, true).ConfigureAwait(false);
                 if (!result.OperationWasFinishedSuccessful)
                     throw CreateException(1, 1, result.ErrorMessage);
@@ -399,7 +405,8 @@ namespace MoleClientLib
         }
         /// <exception cref="InvalidOperationException">При запросе публичного ключа сервер вернул ошибку. -or- 
         /// Отсутствует необходимый криптопровайдер. -or- Длина контента, в ответе, присланным сервером, 
-        /// на запрос открытого ключа, находится вне допустимых пределах. -or- Инициализация не была проведена.</exception>
+        /// на запрос открытого ключа, находится вне допустимых пределах. -or- Инициализация не была проведена. -or- 
+        /// Подлинность открытоко ключа ассиметричного шифрования не подтверждена.</exception>
         public async Task<IAsymmetricEncrypter> GetPublicKeyAsync()
         {
             if (!ClientF.Connected)
@@ -409,10 +416,14 @@ namespace MoleClientLib
 
             try
             {
-                var publicKeyAsBytes = await SendAndRecieveAsync<object, byte[]>(null, 0, false, false).ConfigureAwait(false);
+                //var publicKeyAsBytes = await SendAndRecieveAsync<object, byte[]>(null, 0, false, false).ConfigureAwait(false);
+                var publicKeyForm = await SendAndRecieveAsync<object, PublicKeyForm>(null, 0, false, false).ConfigureAwait(false);
+                if (!publicKeyForm.ValidateSign(CryptoFactory, RemouteUserForm.PublicKey.Key))
+                    throw CreateException(10, 1, RemouteUserForm.Login, RemouteUserForm.SecondaryUserInfo, RemoteEndPoint.ToString());
+
                 var encrypter = CryptoFactory.CreateAsymmetricAlgoritm(CryptoInfoChoosen.Provider,
                     CryptoInfoChoosen.Asymmetric);
-                encrypter.Import(publicKeyAsBytes);
+                encrypter.Import(publicKeyForm.Key);
                 AsymmetricEncrypter = encrypter;
                 return AsymmetricEncrypter;
             }
@@ -428,9 +439,25 @@ namespace MoleClientLib
                 var decrypter = CryptoFactory.CreateAsymmetricAlgoritm(CryptoInfoChoosen.Provider,
                 CryptoInfoChoosen.Asymmetric);
                 var publicKey = decrypter.Export(false);
-                var result = await SendAndRecieveAsync(publicKey, 9, false, false).ConfigureAwait(false);
-                var resultOfOperation = Serializer.Deserialize<ResultOfOperation>(result, false);
-                if (!resultOfOperation.OperationWasFinishedSuccessful)
+                //var hashAlg = CryptoFactory.CreateHashAlgorithm(CryptoInfoChoosen.Provider, CryptoInfoChoosen.Hash);
+                var hashAlg = CryptoFactory.CreateHashAlgorithm(CoreF.MyUserForm.KeyParametrsBlob.CryptoProvider,
+                    CoreF.MyUserForm.KeyParametrsBlob.HashAlg);
+                var hash = hashAlg.ComputeHash(publicKey);
+                //var signAlg = CryptoFactory.CreateSignAlgoritm(CryptoInfoChoosen.Provider, CryptoInfoChoosen.Sign);
+                var sign = CoreF.SignAlgImpl.SignData(hash);
+                var publicKeyForm = new PublicKeyForm()
+                {
+                    CryptoAlg = CoreF.MyUserForm.KeyParametrsBlob.CryptoAlg,
+                    CryptoProvider = CoreF.MyUserForm.KeyParametrsBlob.CryptoProvider,
+                    Hash = hash,
+                    HashAlg = CoreF.MyUserForm.KeyParametrsBlob.HashAlg,
+                    Key = publicKey,
+                    Sign = sign
+                };
+                var result = await SendAndRecieveAsync(publicKeyForm, 9, false, false).ConfigureAwait(false);
+                //var result = await SendAndRecieveAsync(publicKey, 9, false, false).ConfigureAwait(false);
+                //var resultOfOperation = Serializer.Deserialize<ResultOfOperation>(result, false);
+                if (!result.OperationWasFinishedSuccessful)
                     CreateException(0, 0);
 
                 AsymmetricDecrypter = decrypter;
@@ -938,6 +965,15 @@ namespace MoleClientLib
                             str.Append("Во время запроса, на получение открытого публичного ключа, произошла непредвиденная ошибка.");
                             result = new Exception(str.ToString(), (Exception) objs[2]);
                             result.Data.Add("this", JsonConvert.SerializeObject(objs[1], Formatting.Indented, _jsonSettings));
+                            break;
+                        case 1:
+                            //throw CreateException(10, 01, 1RemouteUserForm.Login, 2RemouteUserForm.SecondaryUserInfo, 3RemoteEndPoint.ToString());
+                            str.AppendLine("Подлинность открытоко ключа ассиметричного шифрования не подтверждена.");
+                            str.AppendLine($"Login: {objs[1]}");
+                            str.Append($"RemoteEndPoint: {objs[3]}");
+                            result = new InvalidOperationException(str.ToString());
+                            result.Data.Add("RemouteUserForm.SecondaryUserInfo",
+                                JsonConvert.SerializeObject(objs[2], Formatting.Indented, _jsonSettings));
                             break;
                     }
                     break;

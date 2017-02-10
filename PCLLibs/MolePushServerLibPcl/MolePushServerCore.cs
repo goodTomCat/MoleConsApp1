@@ -133,6 +133,7 @@ namespace MolePushServerLibPcl
                 resultOfOperation.OperationWasFinishedSuccessful = true;
                 return resultOfOperation.OperationWasFinishedSuccessful;
 
+                //seria
             }
             //catch (SerializationException ex)
             //    when (Type.GetType(ex.Source).GetTypeInfo().GetInterface("IFileEngine<UserForm>") != null)
@@ -261,8 +262,9 @@ namespace MolePushServerLibPcl
                             {
                                 Source = GetType().AssemblyQualifiedName
                             };
-                        var signAlg = cryptoFactory.CreateSignAlgoritm(choosenCrypto.Provider, formSignAuth.SignantureAlgoritmName);
-                        signAlg.Import(formWasFinded.KeyParametrsBlob);
+                        var signAlg = cryptoFactory.CreateSignAlgoritm(formSignAuth.CryptoProvider, formSignAuth.SignantureAlgoritmName);
+                        //var signAlg = cryptoFactory.CreateSignAlgoritm(choosenCrypto.Provider, formSignAuth.SignantureAlgoritmName);
+                        signAlg.Import(formWasFinded.KeyParametrsBlob.Key);
                         if (signAlg.VerifySign(formSignAuth.Hash, formSignAuth.Sign))
                             resultOfOperation.OperationWasFinishedSuccessful = true;
                         else
@@ -458,7 +460,7 @@ namespace MolePushServerLibPcl
                 resultOfOperation.OperationWasFinishedSuccessful = false;
                 return false;
             }
-            if (form.KeyParametrsBlob == null || form.KeyParametrsBlob.Length == 0)
+            if (form.KeyParametrsBlob == null || form.KeyParametrsBlob.Key.Length == 0)
             {
                 resultOfOperation.ErrorMessage = "Поле KeyParametrsBlob является пустым массивом байтов или равно null.";
                 resultOfOperation.OperationWasFinishedSuccessful = false;

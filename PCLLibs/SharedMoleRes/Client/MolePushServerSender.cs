@@ -671,75 +671,75 @@ namespace SharedMoleRes.Client
             }
             
         }
-        //private async Task<ResultOfOperation> ReadEncResultAsync(CustomBinarySerializerBase ser = null)
+        ////private async Task<ResultOfOperation> ReadEncResultAsync(CustomBinarySerializerBase ser = null)
+        ////{
+        ////    if (ser == null)
+        ////        ser = new ProtoBufSerializer();
+
+        ////    var reader = new BinaryReader(NetStream);
+        ////    var numbOfBytesToRead = reader.ReadInt32();
+        ////    var readedBytes = new byte[numbOfBytesToRead];
+        ////    await NetStream.ReadAsync(readedBytes, 0, readedBytes.Length);
+        ////    var bytesDec = AesDecrypter.TransformFinalBlock(readedBytes, 0, readedBytes.Length);
+        ////    var resultFromServer = ser.Deserialize<ResultOfOperation>(bytesDec, false);
+        ////    return resultFromServer;
+        ////}
+
+        ////private async Task<CurrentResult<TResult>> ReadEncCurrentResultAsync<TResult>(CustomBinarySerializerBase ser = null)
+        ////{
+        ////    if (ser == null)
+        ////        ser = new ProtoBufSerializer();
+
+        ////    var reader = new BinaryReader(NetStream);
+        ////    var numbOfBytesToRead = reader.ReadInt32();
+        ////    var readedBytes = new byte[numbOfBytesToRead];
+        ////    await NetStream.ReadAsync(readedBytes, 0, readedBytes.Length);
+        ////    var bytesDec = AesDecrypter.TransformFinalBlock(readedBytes, 0, readedBytes.Length);
+        ////    var resultFromServer = ser.Deserialize<CurrentResult<TResult>>(bytesDec, false);
+        ////    return resultFromServer;
+        ////}
+        //private async Task<Tuple<IEnumerable<TcpListener>, CngKey, RSACng, UserForm>> CreateFormAsync(bool listenPorts,
+        //    Random random = null)
         //{
-        //    if (ser == null)
-        //        ser = new ProtoBufSerializer();
+        //    var keySign = CngKey.Create(CngAlgorithm.ECDsaP521);
+        //    var rsa = new RSACng(4096);
+        //    var rand = random ?? new Random();
+        //    var form = new UserForm()
+        //    {
+        //        KeyParametrsBlob = keySign.Export(CngKeyBlobFormat.EccPublicBlob),
+        //        Login = $"Frodo {rand.Next(0, 555)}",
+        //        Password = "123456",
+        //        PortClientToClient1 = (ushort)rand.Next(20000, 60000),
+        //        PortClientToClient2 = (ushort)rand.Next(20000, 60000),
+        //        PortClientToClient3 = (ushort)rand.Next(20000, 60000),
+        //        PortServerToClient = (ushort)rand.Next(20000, 60000)
+        //    };
 
-        //    var reader = new BinaryReader(NetStream);
-        //    var numbOfBytesToRead = reader.ReadInt32();
-        //    var readedBytes = new byte[numbOfBytesToRead];
-        //    await NetStream.ReadAsync(readedBytes, 0, readedBytes.Length);
-        //    var bytesDec = AesDecrypter.TransformFinalBlock(readedBytes, 0, readedBytes.Length);
-        //    var resultFromServer = ser.Deserialize<ResultOfOperation>(bytesDec, false);
-        //    return resultFromServer;
-        //}
+        //    var listners = new List<TcpListener>(4);
+        //    if (listenPorts)
+        //    {
+        //        var listnerStartTasks = new Task[4];
+        //        var listner1 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient1);
+        //        listnerStartTasks[0] = Task.Run(() => listner1.Start());
+        //        listners.Add(listner1);
 
-        //private async Task<CurrentResult<TResult>> ReadEncCurrentResultAsync<TResult>(CustomBinarySerializerBase ser = null)
-        //{
-        //    if (ser == null)
-        //        ser = new ProtoBufSerializer();
+        //        var listner2 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient2);
+        //        listnerStartTasks[1] = Task.Run(() => listner2.Start());
+        //        listners.Add(listner2);
 
-        //    var reader = new BinaryReader(NetStream);
-        //    var numbOfBytesToRead = reader.ReadInt32();
-        //    var readedBytes = new byte[numbOfBytesToRead];
-        //    await NetStream.ReadAsync(readedBytes, 0, readedBytes.Length);
-        //    var bytesDec = AesDecrypter.TransformFinalBlock(readedBytes, 0, readedBytes.Length);
-        //    var resultFromServer = ser.Deserialize<CurrentResult<TResult>>(bytesDec, false);
-        //    return resultFromServer;
-        //}
-        private async Task<Tuple<IEnumerable<TcpListener>, CngKey, RSACng, UserForm>> CreateFormAsync(bool listenPorts,
-            Random random = null)
-        {
-            var keySign = CngKey.Create(CngAlgorithm.ECDsaP521);
-            var rsa = new RSACng(4096);
-            var rand = random ?? new Random();
-            var form = new UserForm()
-            {
-                KeyParametrsBlob = keySign.Export(CngKeyBlobFormat.EccPublicBlob),
-                Login = $"Frodo {rand.Next(0, 555)}",
-                Password = "123456",
-                PortClientToClient1 = (ushort)rand.Next(20000, 60000),
-                PortClientToClient2 = (ushort)rand.Next(20000, 60000),
-                PortClientToClient3 = (ushort)rand.Next(20000, 60000),
-                PortServerToClient = (ushort)rand.Next(20000, 60000)
-            };
+        //        var listner3 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient3);
+        //        listnerStartTasks[2] = Task.Run(() => listner3.Start());
+        //        listners.Add(listner3);
 
-            var listners = new List<TcpListener>(4);
-            if (listenPorts)
-            {
-                var listnerStartTasks = new Task[4];
-                var listner1 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient1);
-                listnerStartTasks[0] = Task.Run(() => listner1.Start());
-                listners.Add(listner1);
+        //        var listner4 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortServerToClient);
+        //        listnerStartTasks[3] = Task.Run(() => listner4.Start());
+        //        listners.Add(listner4);
 
-                var listner2 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient2);
-                listnerStartTasks[1] = Task.Run(() => listner2.Start());
-                listners.Add(listner2);
-
-                var listner3 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortClientToClient3);
-                listnerStartTasks[2] = Task.Run(() => listner3.Start());
-                listners.Add(listner3);
-
-                var listner4 = new TcpListener(IPAddress.Parse("192.168.65.129"), form.PortServerToClient);
-                listnerStartTasks[3] = Task.Run(() => listner4.Start());
-                listners.Add(listner4);
-
-                await Task.WhenAll(listnerStartTasks);
+        //        await Task.WhenAll(listnerStartTasks);
                 
-            }
-            return new Tuple<IEnumerable<TcpListener>, CngKey, RSACng, UserForm>(listners, keySign, rsa, form);
-        }
+        //    }
+        //    return new Tuple<IEnumerable<TcpListener>, CngKey, RSACng, UserForm>(listners, keySign, rsa, form);
+        //}
         private Exception CreateException(int n, params object[] objs)
         {
             try
